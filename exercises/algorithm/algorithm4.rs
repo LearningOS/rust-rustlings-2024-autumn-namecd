@@ -3,6 +3,8 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
+
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,18 +52,21 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
-        match self.root {
-            Some(ref mut node) => node.insert(value),
-            None => self.root = Some(Box::new(TreeNode::new(value))),
+        if let Some(ref mut root) = self.root {
+            root.insert(value);
+        }else{
+            self.root = Some(Box::new(TreeNode :: new(value)))
         }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        match self.root {
-            Some(ref node) => node.search(value),
-            None => false,
+        if let Some(ref root) = self.root {
+            root.search(value)
+        }
+        else{
+            false
         }
     }
 }
@@ -73,39 +78,46 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
-        match value.cmp(&self.value){
+        match value.cmp(&self.value) {
             Ordering::Less => {
-                match self.left {
-                    Some(ref mut node) => node.insert(value),
-                    None => self.left = Some(Box::new(TreeNode::new(value))),
+                if let Some(ref mut left) = self.left {
+                    left.insert(value);
+                }else{
+                    self.left = Some(Box::new(TreeNode::new(value)));
                 }
-            },
+            }
             Ordering::Greater => {
-                match self.right {
-                    Some(ref mut node) => node.insert(value),
-                    None => self.right = Some(Box::new(TreeNode::new(value))),
+                if let Some(ref mut right) = self.right {
+                    right.insert(value);
+                }else{
+                    self.right = Some(Box::new(TreeNode::new(value)));
                 }
-            },
-            Ordering::Equal => (),
+            }
+            _ => {
+                ()
+            }
         }
     }
-    fn search(&self, value: T) -> bool {
-        match value.cmp(&self.value){
+    fn search(&self, value : T) -> bool {
+        match value.cmp(&self.value) {
             Ordering::Less => {
-                match self.left {
-                    Some(ref node) => node.search(value),
-                    None => false,
+                if let Some(ref left) = self.left {
+                    left.search(value)
+                }else{
+                    false
                 }
-            },
+            }
             Ordering::Greater => {
-                match self.right {
-                    Some(ref node) => node.search(value),
-                    None => false,
+                if let Some(ref right) = self.right {
+                    right.search(value)
+                }else{
+                    false
                 }
-            },
-            Ordering::Equal => true,
+            }
+            Ordering::Equal => true
         }
     }
+    
 }
 
 

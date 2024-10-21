@@ -3,7 +3,6 @@
 	This question requires you to implement a binary heap function
 */
 
-
 use std::cmp::Ord;
 use std::default::Default;
 
@@ -42,6 +41,26 @@ where
         self.count += 1;
         self.bubble_up(self.count);
     }
+    fn bubble_up(&mut self, mut idx : usize) {
+        let mut parent_idx = self.parent_idx(idx);
+        while idx > 1 && (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+            self.items.swap(idx, parent_idx);
+            idx = parent_idx;
+            parent_idx = self.parent_idx(idx);
+        }
+    }
+    fn bubble_down(&mut self, mut idx : usize) {
+        while self.children_present(idx) {
+            let smallest_child_idx = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]){
+                self.items.swap(idx, smallest_child_idx);
+                idx = smallest_child_idx
+            }
+            else{
+                break;
+            }
+        }
+    }
 
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
@@ -61,37 +80,17 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		let left = self.left_child_idx(idx);
-        let right = self.right_child_idx(idx);
-
-        if right <= self.count && (self.comparator)(&self.items[right], &self.items[left]) {
-            right
-        } else {
-            left
+		if self.right_child_idx(idx) > self.count {
+            self.left_child_idx(idx)
+        }
+        else if (self.comparator)(&self.items[self.left_child_idx(idx)], &self.items[self.right_child_idx(idx)]){
+            self.left_child_idx(idx)
+        }
+        else {
+            self.right_child_idx(idx)
         }
     }
     
-    fn bubble_up(&mut self, mut idx: usize) {
-        while idx > 1 {
-            let parent_idx = self.parent_idx(idx);
-            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
-                self.items.swap(idx, parent_idx);
-                idx = parent_idx;
-            } else {
-                break;
-            }
-        }
-    }
-    
-    fn bubble_down(&mut self, mut idx: usize) {
-        while self.children_present(idx) {
-            let smallest_child_idx = self.smallest_child_idx(idx);
-            if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
-                self.items.swap(idx, smallest_child_idx);
-            }
-            idx = smallest_child_idx;
-        }
-    }
 }
 
 impl<T> Heap<T>
@@ -119,7 +118,7 @@ where
         //TODO
 		if self.is_empty() {
             None
-        } else {
+        }else{
             let result = self.items.swap_remove(1);
             self.count -= 1;
             if !self.is_empty() {

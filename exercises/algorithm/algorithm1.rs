@@ -72,37 +72,29 @@ impl<T> LinkedList<T> {
     where T : Clone + PartialOrd
 	{
 		//TODO
-        let mut merged_list = LinkedList::new();
-        let mut list_a = list_a;
-        let mut list_b = list_b;
-        while let (Some(a), Some(b)) = (list_a.start, list_b.start) {
-            unsafe {
-                if (*a.as_ptr()).val <= (*b.as_ptr()).val {
-                    merged_list.add((*a.as_ptr()).val.clone());
-                    list_a.start = (*a.as_ptr()).next;
-                } else {
-                    merged_list.add((*b.as_ptr()).val.clone());
-                    list_b.start = (*b.as_ptr()).next;
-                }
+        let mut list_c = LinkedList::new();
+        let mut node_a = list_a.start;
+        let mut node_b = list_b.start;
+        while node_a.is_some() && node_b.is_some() {
+            let val_a = unsafe{node_a.unwrap().as_ref().val.clone()};
+            let val_b = unsafe{node_b.unwrap().as_ref().val.clone()};
+            if val_a <= val_b {
+                list_c.add(val_a);
+                node_a = unsafe{node_a.unwrap().as_ref().next.clone()};
+            }else{
+                list_c.add(val_b);
+                node_b = unsafe{node_b.unwrap().as_ref().next.clone()};
             }
         }
-
-        while let Some(a) = list_a.start {
-            unsafe {
-                merged_list.add((*a.as_ptr()).val.clone());
-                list_a.start = (*a.as_ptr()).next;
-            }
+        while node_a.is_some(){
+            list_c.add(unsafe{node_a.unwrap().as_ref().val.clone()});
+            node_a = unsafe{node_a.unwrap().as_ref().next.clone()};
         }
-
-        while let Some(b) = list_b.start {
-            unsafe {
-                merged_list.add((*b.as_ptr()).val.clone());
-                list_b.start = (*b.as_ptr()).next;
-            }
+        while node_b.is_some() {
+            list_c.add(unsafe{node_b.unwrap().as_ref().val.clone()});
+            node_b = unsafe{node_b.unwrap().as_ref().next.clone()};
         }
-
-        merged_list
-		
+        list_c
 	}
 }
 
